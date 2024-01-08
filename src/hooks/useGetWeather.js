@@ -6,19 +6,21 @@ export const useGetWeather = () => {
     const [isloading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
     const [weather, setWeather] = useState([])
-    const [lat, setLat] = useState([])
-    const [lon, setLon] = useState([])
+    const [lat, setLat] = useState(null)
+    const [lon, setLon] = useState(null)
 
 
     const fetchWeatherData = async () => {
-        try {
-            const res = await fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=16991c28f8b15ad92400218efbb0a9ce&units=metric`)
-            const data = await res.json()
-            setWeather(data)
-        } catch (e) {
-            setError('Could not fetch weather')
-        } finally {
-            setIsLoading(false)
+        if (lat && lon) {
+            try {
+                const res = await fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${process.env.EXPO_PUBLIC_OPEN_WEATHER_API}&units=metric`)
+                const data = await res.json()
+                setWeather(data)
+            } catch (e) {
+                setError('Could not fetch weather')
+            } finally {
+                setIsLoading(false)
+            }
         }
     }
 

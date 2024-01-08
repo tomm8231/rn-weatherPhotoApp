@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, StyleSheet, View, Button, Image, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView, Text, StyleSheet, View, Button, Image, FlatList, TouchableOpacity, Platform } from "react-native";
 import * as ImagePicker from 'expo-image-picker'
 import { storage, app, database } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -64,10 +64,16 @@ const Gallery = ({ weatherData, navigation, route }) => {
     };
 
     const editImageText = (itemData) => {
-        navigation.navigate('GalleryTextEdit', {
-            itemData
-        });
+        navigation.navigate('GalleryTextEdit', { itemData });
     };
+
+    const showImageInfo = (itemData) => {
+        navigation.navigate('GalleryImageInfo', { itemData })
+    }
+
+    const showWorldMap = (data) => {
+        navigation.navigate('GalleryWorldMap', {data})
+    }
 
     const toggleDeleteMode = () => {
         if (deleteMode) {
@@ -82,8 +88,38 @@ const Gallery = ({ weatherData, navigation, route }) => {
         await deleteDoc(doc(database, "weatherData", id))
     }
 
+    function pickImage() {
+        if (Platform.OS === 'android' || Platform.OS === 'ios') {
+            launchCamera()
+        } else if (Platform.OS === 'web') {
+            launchImagePicker()
+        }
+    }
+
+    async function launchCamera() {
+
+        const result = await ImagePicker.requestCameraPermissionsAsync()
+        if (result.granted === false) {
+            console.log("Camera access not provided");
+        } else {
+            ImagePicker.launchCameraAsync({
+                quality: 1
+            })
+                .then((response) => {
+                    if (!response.canceled) {
+                        setImageToUploadPath(response.assets[0].uri)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error in camera: " + error);
+                })
+
+        }
+    }
+
 
     async function launchImagePicker() {
+
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true
         })
@@ -137,7 +173,7 @@ const Gallery = ({ weatherData, navigation, route }) => {
         const manipResult = await ImageManipulator.manipulateAsync(
             imageToUploadPath,
             [{ resize: { width: 800 } }],
-            { compress: 0.7 } 
+            { compress: 0.7 }
         );
 
 
@@ -174,15 +210,23 @@ const Gallery = ({ weatherData, navigation, route }) => {
                     )}
 
                     <View style={[rowLayout, data?.length == 0 ? styles.centeredAddImageBox : addImageBox]}>
-                        <TouchableOpacity style={[button]} onPress={launchImagePicker}>
-                            <View>
-                                <Feather
-                                    name={'plus'}
-                                    size={50}
-                                    color='silver' />
-                            </View>
+                        <TouchableOpacity style={[button]} onPress={pickImage}>
+                            <Feather
+                                name={'plus'}
+                                size={40}
+                                color='silver' />
                         </TouchableOpacity>
                     </View>
+                    {Platform.OS !== 'web' && (
+                    <View style={[rowLayout, styles.viewWorldMap]}>
+                        <TouchableOpacity style={[button]} onPress={() => showWorldMap(data)}>
+                            <Feather
+                                name={'map'}
+                                size={40}
+                                color='silver' />
+                        </TouchableOpacity>
+                    </View>
+                    )}
                 </>
             )}
             {imageToUploadPath && (
@@ -223,7 +267,7 @@ const Gallery = ({ weatherData, navigation, route }) => {
                             </>
                             {selectedImage === item.id && !deleteMode && !confirmDeletion && (
                                 <View style={styles.overlay}>
-                                    <TouchableOpacity onPress={() => alert("Info")}>
+                                    <TouchableOpacity onPress={() => showImageInfo(item)}>
                                         <Feather
                                             name={'info'}
                                             size={50}
@@ -319,17 +363,17 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 10,
         backgroundColor: "grey",
-        height: 70,
         borderWidth: 2,
         borderColor: "black",
         borderRadius: 15,
         elevation: 10,
         marginVertical: 20,
 
-        top: "83%",
+        top: "85%",
         right: 0,
-        left: "75%",
-        width: 75
+        left: "77%",
+        height: 60,
+        width: 65,
     },
     overlay: {
         position: 'absolute',
@@ -363,13 +407,13 @@ const styles = StyleSheet.create({
         position: "absolute",
         zIndex: 10,
         backgroundColor: "grey",
-        height: 70,
         borderWidth: 2,
         borderColor: "black",
         borderRadius: 15,
         elevation: 10,
         marginVertical: 20,
-        width: 75,
+        height: 60,
+        width: 65,
         alignSelf: 'center',
         justifyContent: 'center',
         top: '50%',
@@ -388,6 +432,22 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#000'
+    },
+    viewWorldMap: {
+        position: "absolute",
+        zIndex: 10,
+        backgroundColor: "grey",
+        borderWidth: 2,
+        borderColor: "black",
+        borderRadius: 15,
+        elevation: 10,
+        marginVertical: 20,
+
+        top: "85%",
+        left: "5%",
+        right: "75%",
+        height: 60,
+        width: 65
     }
 
 
