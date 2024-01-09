@@ -36,13 +36,13 @@ const GalleryImageInfo = ({ route }) => {
                     color={"silver"}
                 />
             </TouchableOpacity>
-            <Text>{text}</Text>
-            <Text>{locationName}, {country}</Text>
-            <Text>{day}/{month}/{year}</Text>
-            <Text>{hours}:{minutes}</Text>
-            <Text>{temp} / {feels_like}</Text>
-            <Text>{speed} / {gust}</Text>
-            <Text>{lat}, {lon}</Text>
+            <Text style={styles.infoText}>{text}</Text>
+            <Text style={styles.infoText}>{locationName}, {country}</Text>
+            <Text style={styles.infoText}>{day}/{month}/{year}</Text>
+            <Text style={styles.infoText}>{hours}:{minutes}</Text>
+            <Text style={styles.infoText}>{temp} / {feels_like}</Text>
+            <Text style={styles.infoText}>{speed} / {gust}</Text>
+            <Text style={styles.infoText}>{lat}, {lon}</Text>
 
             <MapView
                 style={styles.map}
@@ -67,13 +67,32 @@ const GalleryImageInfo = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+    // container: {
+    //     flex: 1,
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //     backgroundColor: "olivedrab"
+    // },
+    // goBack: {
+    //     position: "absolute",
+    //     zIndex: 10,
+    //     marginVertical: 20,
+    //     bottom: "85%",
+    //     right: 0,
+    //     left: "80%",
+    //     width: 50
+    // },
+    // map: {
+    //     width: "90%",
+    //     height: 200,
+    // }
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "olivedrab"
-    },
-    goBack: {
+      },
+      goBack: {
         position: "absolute",
         zIndex: 10,
         marginVertical: 20,
@@ -81,11 +100,16 @@ const styles = StyleSheet.create({
         right: 0,
         left: "80%",
         width: 50
-    },
-    map: {
+      },
+      infoText: {
+        fontSize: 16,
+        marginVertical: 5,
+        color: "white"
+      },
+      map: {
         width: "90%",
         height: 200,
-    }
+      }
 });
 
 export default GalleryImageInfo;
