@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons'
-import MapView, { Marker } from "react-native-maps";
-
+import MapView, { Marker } from "react-native-maps"
 
 const GalleryImageInfo = ({ route }) => {
     const { itemData } = route.params;
@@ -44,6 +43,7 @@ const GalleryImageInfo = ({ route }) => {
             <Text>{temp} / {feels_like}</Text>
             <Text>{speed} / {gust}</Text>
             <Text>{lat}, {lon}</Text>
+
             <MapView
                 style={styles.map}
                 region={{
@@ -53,13 +53,13 @@ const GalleryImageInfo = ({ route }) => {
                     longitudeDelta: 0.4
                 }}
             >
-                <Marker 
-                coordinate={{
-                    latitude: lat,
-                    longitude: lon
-                }}
-                key={id}
-                title={locationName}
+                <Marker
+                    coordinate={{
+                        latitude: lat,
+                        longitude: lon
+                    }}
+                    key={id}
+                    title={locationName}
                 />
             </MapView>
         </View>

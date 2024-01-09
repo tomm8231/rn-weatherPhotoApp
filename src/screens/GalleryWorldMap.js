@@ -2,27 +2,13 @@ import React from "react";
 import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons'
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Callout, Marker } from "react-native-maps";
+import { WebView } from 'react-native-webview';
+
 
 
 const GalleryWorldMap = ({ route }) => {
     const { data } = route.params;
-    console.log(data);
-    // const {
-    //     id,
-    //     text,
-    //     weatherInfo: {
-    //         coords: { lat, lon },
-    //         country,
-    //         date: { day, hours, minutes, seconds, month, year },
-    //         feels_like,
-    //         gust,
-    //         speed,
-    //         locationName,
-    //         temp,
-    //         timeStamp
-    //     }
-    // } = data
 
     const { width, height } = Dimensions.get('window');
     const navigation = useNavigation();
@@ -40,16 +26,29 @@ const GalleryWorldMap = ({ route }) => {
             </TouchableOpacity>
 
             <MapView
-                style={styles.map}
+                style={styles.mapBox}
             >
-                {/* <Marker 
-                coordinate={{
-                    latitude: lat,
-                    longitude: lon
-                }}
-                key={id}
-                title={locationName}
-                /> */}
+                {data && (
+                    <>
+                        {data.map((location) => (
+                            <Marker
+                                coordinate={{
+                                    latitude: location.weatherInfo.coords.lat,
+                                    longitude: location.weatherInfo.coords.lon
+                                }}
+                                key={location.id}
+                                title={location.weatherInfo.locationName}
+                            >
+                                <Callout>
+                                    
+                                    <View style={styles.markerBox}>
+                                            <WebView style={{ width: 200, height: 200}}  source={{ uri: location.imageUrl }} />
+                                        </View>
+                                </Callout>
+                            </Marker>
+                        ))}
+                    </>
+                )}
             </MapView>
         </View>
     );
@@ -71,9 +70,13 @@ const styles = StyleSheet.create({
         left: "80%",
         width: 50
     },
-    map: {
+    mapBox: {
         width: "95%",
         height: "75%"
+    },
+    markerBox: {
+        height: 200,
+        width: 200,
     }
 });
 
